@@ -169,6 +169,7 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 	*/
+
 	vector<GLfloat> vertices;
 	// read from file
 	ifstream file("VertexBuffer.csv");
@@ -184,6 +185,16 @@ int main()
 		//i++;
 	}
 
+	vector<GLuint> indices;
+	ifstream index_file("IndexBuffer.csv");
+	while (index_file) {
+		int line;
+		GLuint index;
+		index_file >> line;
+		index_file >> index;
+		indices.push_back(index);
+	}
+
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(2.0f, 5.0f, -15.0f),
@@ -197,9 +208,11 @@ int main()
 		glm::vec3(-1.3f, 1.0f, -1.5f)
 	};
 
-	GLuint VBO, VAO;
+	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
 	// Bind our Vertex Array Object first, then bind and set our buffers and pointers.
 	glBindVertexArray(VAO);
 
@@ -207,12 +220,8 @@ int main()
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
 
-	// Position attribute
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-	//glEnableVertexAttribArray(0);
-	// TexCoord attribute
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	//glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
 	// cup position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
@@ -224,7 +233,8 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
-	glBindVertexArray(0); // Unbind VAO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);  // unbind VBO
+	glBindVertexArray(0); // Unbind VAO ²»Òªunbind EBO
 
 						  // Load and create a texture 
 	GLuint texture1;
@@ -270,9 +280,6 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, texture2);
-		//glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);
 
 		// Create camera transformation
 		glm::mat4 view;
@@ -288,7 +295,8 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		// Swap the buffers
@@ -297,6 +305,7 @@ int main()
 	// Properly de-allocate all resources once they've outlived their purpose
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glfwTerminate();
 	return 0;
 }
