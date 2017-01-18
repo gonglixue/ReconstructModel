@@ -23,6 +23,7 @@
 // Other Libs
 #include <SOIL.h>
 
+#include "ExportOBJ.h"
 using namespace std;
 
 // Properties
@@ -86,7 +87,7 @@ int main()
 	cout << sizeof(GLfloat) << endl;
 	vector<GLfloat> vertices;
 	// read from file
-	ifstream file("./2517/Vertex.txt");
+	ifstream file("./2591/Vertex.txt");
 	//int i = 0;
 	while (file)
 	{
@@ -100,7 +101,7 @@ int main()
 	}
 
 	vector<GLuint> indices;
-	ifstream index_file("./2517/Index.txt");
+	ifstream index_file("./2591/Index.txt");
 	while (index_file) {
 		int line;
 		GLuint index;
@@ -108,6 +109,8 @@ int main()
 		index_file >> index;
 		indices.push_back(index);
 	}
+
+	//exportOBJ(vertices, indices, 97176 / 4, 129568 / 4, "v2581");
 
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -129,10 +132,10 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	// cup normal attribute
-	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(GLfloat), (GLvoid*)(83112));
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(GLfloat), (GLvoid*)(97176));
 	glEnableVertexAttribArray(1);
 	// cup texcoord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(110816));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(129568));
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);  // unbind VBO
@@ -151,7 +154,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// Load, create texture and generate mipmaps
 	int width, height;
-	unsigned char* image = SOIL_load_image("./2517/Texture.bmp", &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = SOIL_load_image("./2591/Texture.bmp", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
