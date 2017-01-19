@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <strstream>
 
 // GLEW
 #include <GL\glew.h>
@@ -47,6 +48,8 @@ bool CameraRotate = false;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+int drawcallID = 1;
+
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
@@ -83,25 +86,29 @@ int main()
 	// Setup and compile our shaders
 	Shader ourShader("./shader.vs", "./shader.frag");
 
-	// Set up our vertex data (and buffer(s)) and attribute pointers
-	cout << sizeof(GLfloat) << endl;
+	strstream drawcallID_stream;
+	string drawcall_str;
+	drawcallID_stream << drawcallID;
+	drawcallID_stream >> drawcall_str;
+	string folderstr = "./drawcall/" + drawcall_str;
 	vector<GLfloat> vertices;
 	// read from file
-	ifstream file("./2591/Vertex.txt");
+	ifstream vertex_file(folderstr + "/Vertex.txt");
 	//int i = 0;
-	while (file)
+	while (vertex_file)
 	{
 		int line;
 		GLfloat data;
-		file >> line;
-		file >> data;
+		vertex_file >> line;
+		vertex_file >> data;
 		vertices.push_back(data);
 		//cout << line << " " << vertices[i] << endl;
 		//i++;
 	}
+	vertex_file.close();
 
 	vector<GLuint> indices;
-	ifstream index_file("./2591/Index.txt");
+	ifstream index_file(folderstr + "/Index.txt");
 	while (index_file) {
 		int line;
 		GLuint index;
@@ -109,8 +116,17 @@ int main()
 		index_file >> index;
 		indices.push_back(index);
 	}
+	index_file.close();
 
-	//exportOBJ(vertices, indices, 97176 / 4, 129568 / 4, "v2581");
+	ifstream offset_file(folderstr + "/offset.txt");
+	int offset1, offset2;
+	while (offset_file) {
+		offset_file >> offset1;
+		offset_file >> offset2;
+	}
+	offset_file.close();
+
+	exportOBJ(vertices, indices, offset1 / 4, offset2 / 4, drawcall_str);
 
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -132,10 +148,10 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	// cup normal attribute
-	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(GLfloat), (GLvoid*)(97176));
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(GLfloat), (GLvoid*)(offset1));
 	glEnableVertexAttribArray(1);
 	// cup texcoord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(129568));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(offset2));
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);  // unbind VBO
@@ -154,7 +170,8 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// Load, create texture and generate mipmaps
 	int width, height;
-	unsigned char* image = SOIL_load_image("./2591/Texture.bmp", &width, &height, 0, SOIL_LOAD_RGB);
+	string img_file = folderstr + "/Texture.bmp";
+	unsigned char* image = SOIL_load_image(img_file.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);

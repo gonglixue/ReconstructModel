@@ -12,7 +12,7 @@ void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, in
 
 void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, int offset2, string filename)
 {
-	ofstream objFile(filename + ".obj");
+	ofstream objFile("./output/"+filename + ".obj");
 
 	if (!objFile)
 		return;
@@ -36,13 +36,13 @@ void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, in
 	for (int i = offset2; i < vertices.size()-1; i++) {
 		if ((i - offset2) % 2 == 0) {
 			objFile << "vt ";
+			objFile << setprecision(5) << vertices[i] << " ";   // x texcoord
 		}
-		objFile << setprecision(5) << vertices[i];
-		if ((i-offset2) % 2 == 1) {
-			objFile << endl;
+		
+
+		else{
+			objFile << setprecision(5) << (1.0 -vertices[i]) << endl;  // y texcoord
 		}
-		else
-			objFile << " ";
 	}
 
 	//写入法向量
@@ -52,12 +52,12 @@ void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, in
 	}
 
 	//写入面
-	for (int i = 0; i < indices.size() / 3; i++)
+	for (int i = 0; i < (indices.size()-1) / 3; i++)
 	{
 		objFile << "f ";
-		objFile << indices[3*i] << "/" << indices[3*i] << "/" << indices[3*i] << " ";
-		objFile << indices[3*i + 1] << "/" << indices[3*i + 1] << "/" << indices[3*i + 1] << " ";
-		objFile << indices[3*i + 2] << "/" << indices[3*i + 2] << "/" << indices[3*i + 2] << " ";
+		objFile << indices[3*i]+1 << "/" << indices[3*i] + 1 << "/" << indices[3*i] + 1 << " ";
+		objFile << indices[3*i + 1] + 1 << "/" << indices[3*i + 1] + 1 << "/" << indices[3*i + 1] + 1 << " ";
+		objFile << indices[3*i + 2] + 1 << "/" << indices[3*i + 2] + 1 << "/" << indices[3*i + 2] + 1 << " ";
 		objFile << endl;
 	}
 
