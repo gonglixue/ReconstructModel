@@ -1,5 +1,2 @@
-﻿  draw_GE.cpp
-c:\users\gonglixue\documents\visual studio 2015\projects\reconstructbuffer\reconstructbuffer\exportobj.h(36): warning C4018: '<': signed/unsigned mismatch
-c:\users\gonglixue\documents\visual studio 2015\projects\reconstructbuffer\reconstructbuffer\exportobj.h(55): warning C4018: '<': signed/unsigned mismatch
-  ReconstructBuffer.vcxproj -> C:\Users\gonglixue\documents\visual studio 2015\Projects\ReconstructBuffer\Debug\ReconstructBuffer.exe
+﻿  ReconstructBuffer.vcxproj -> C:\Users\gonglixue\documents\visual studio 2015\Projects\ReconstructBuffer\Debug\ReconstructBuffer.exe
   ReconstructBuffer.vcxproj -> C:\Users\gonglixue\documents\visual studio 2015\Projects\ReconstructBuffer\Debug\ReconstructBuffer.pdb (Full PDB)

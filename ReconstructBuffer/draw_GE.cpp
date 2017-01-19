@@ -48,7 +48,7 @@ bool CameraRotate = false;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-int drawcallID = 1;
+int drawcallID = 29;
 
 // The MAIN function, from here we start our application and run our Game loop
 int main()
@@ -120,10 +120,8 @@ int main()
 
 	ifstream offset_file(folderstr + "/offset.txt");
 	int offset1, offset2;
-	while (offset_file) {
-		offset_file >> offset1;
-		offset_file >> offset2;
-	}
+	offset_file >> offset1;
+	offset_file >> offset2;
 	offset_file.close();
 
 	exportOBJ(vertices, indices, offset1 / 4, offset2 / 4, drawcall_str);
@@ -174,6 +172,17 @@ int main()
 	unsigned char* image = SOIL_load_image(img_file.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	// 把纹理保存到输出文件夹
+	/* save that image as another type */
+	string outimg = "./output/model" + drawcall_str + ".bmp";
+	int save_result = SOIL_save_image
+	(
+		outimg.c_str(),
+		SOIL_SAVE_TYPE_BMP,
+		width, height, 3,
+		image
+	);
+
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 

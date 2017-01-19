@@ -12,13 +12,14 @@ void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, in
 
 void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, int offset2, string filename)
 {
-	ofstream objFile("./output/"+filename + ".obj");
+	ofstream objFile("./output/model"+filename + ".obj");
 
 	if (!objFile)
 		return;
 
 	//objFile << "g default" << endl;
 	objFile.setf(ios::fixed);
+	objFile << "mtllib model"<< filename << ".mtl" << endl;
 	//写入vertex position
 	for (int i = 0; i < offset1; i++) {
 		if (i % 3 == 0) {
@@ -62,4 +63,10 @@ void exportOBJ(vector<GLfloat> vertices, vector<GLuint> indices, int offset1, in
 	}
 
 	objFile.close();
+
+	// 导出mtl材质文件
+	ofstream mtlFile("./output/model" + filename + ".mtl");
+	mtlFile << "newmtl initialShadingGroup" << endl;
+	mtlFile << "map_Kd model" << filename << ".bmp" << endl;
+	mtlFile.close();
 }
